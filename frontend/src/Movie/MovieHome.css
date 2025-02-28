@@ -1,0 +1,84 @@
+/* MovieHome.css */
+.movie-home-container {
+    padding: 2rem;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    min-height: 100vh;
+    color: #ffffff;
+  }
+  
+  .movie-home-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .movie-home-header h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+  }
+  
+  .add-movie-button {
+    background-color: #6a11cb;
+    color: #ffffff;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .add-movie-button:hover {
+    background-color: #4a00e0;
+  }
+  
+  .movie-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .movie-card {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .movie-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  .movie-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .movie-card p {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    color: #e0e0e0;
+  }
+  
+  .movie-actions {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .movie-actions button {
+    background-color: #6a11cb;
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .movie-actions button:hover {
+    background-color: #4a00e0;
+  }

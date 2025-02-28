@@ -1,0 +1,63 @@
+
+/* MovieForm.css */
+.movie-form-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: rgba(28, 28, 28, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    color: #1b1a1a;
+  }
+  
+  .movie-form-container h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  .movie-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .movie-form label {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .movie-form input,
+  .movie-form textarea,
+  .movie-form select {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 5px;
+    background: rgba(35, 34, 34, 0.1);
+    color: #141212;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .movie-form input:focus,
+  .movie-form textarea:focus,
+  .movie-form select:focus {
+    background: rgba(32, 31, 31, 0.2);
+    outline: none;
+  }
+  
+  .movie-form button {
+    background-color: #6a11cb;
+    color: #1e1919;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .movie-form button:hover {
+    background-color: #4a00e0;
+  }
