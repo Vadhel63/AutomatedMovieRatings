@@ -94,8 +94,8 @@ router.get("/:id", auth, isProducer, async (req, res, next) => {
       "Producer",
       "UserName Email"
     );
-
-    if (!movie || movie.Producer._id.toString() !== req.userData.userId) {
+    console.log(movie.Producer[0]._id);//producer field is array list thats why write like this
+    if (!movie || movie.Producer[0]._id.toString() !== req.userData.userId) {
       console.error("Movie not found or unauthorized access.");
       return res.status(404).json({ message: "Movie not found." });
     }
@@ -110,46 +110,51 @@ router.get("/:id", auth, isProducer, async (req, res, next) => {
 });
 
 // Update a movie
-router.patch("/:id", upload.single("MovieImage"),auth, isProducer, async (req, res, next) => {
-  const movieId = req.params.id;
-  const { Name, Description, MovieRating, Type, MovieImage, RealesedDate } =
-    req.body;
+router.patch(
+  "/:id",
+  upload.single("MovieImage"),
+  auth,
+  isProducer,
+  async (req, res, next) => {
+    const movieId = req.params.id;
+    const { Name, Description, MovieRating, Type, MovieImage, RealesedDate } =
+      req.body;
 
-  if (!mongoose.Types.ObjectId.isValid(movieId)) {
-    return next(new HttpError("Invalid movie ID format.", 400));
-  }
-
-  try {
-    const movie = await Movie.findOne({
-      _id: movieId,
-      Producer: req.userData.userId,
-    });
-    if (!movie) {
-      return next(new HttpError("Movie not found.", 404));
+    if (!mongoose.Types.ObjectId.isValid(movieId)) {
+      return next(new HttpError("Invalid movie ID format.", 400));
     }
 
-    // Update fields if provided in the request body
-    if (Name) movie.Name = Name;
-    if (Description) movie.Description = Description;
-    if (MovieRating) movie.MovieRating = MovieRating;
-    if (Type) movie.Type = Type;
-    if (RealesedDate) movie.RealesedDate = RealesedDate;
-    if(req.file)
-    {
-      movie.MovieImage = req.file.path;
-    }
-    movie.updatedAt = new Date();
+    try {
+      const movie = await Movie.findOne({
+        _id: movieId,
+        Producer: req.userData.userId,
+      });
+      if (!movie) {
+        return next(new HttpError("Movie not found.", 404));
+      }
 
-    await movie.save();
-    res.json({ message: "Movie updated successfully", movie });
-  } catch (err) {
-    const error = new HttpError(
-      "Updating movie failed, please try again.",
-      500
-    );
-    return next(error);
+      // Update fields if provided in the request body
+      if (Name) movie.Name = Name;
+      if (Description) movie.Description = Description;
+      if (MovieRating) movie.MovieRating = MovieRating;
+      if (Type) movie.Type = Type;
+      if (RealesedDate) movie.RealesedDate = RealesedDate;
+      if (req.file) {
+        movie.MovieImage = req.file.path;
+      }
+      movie.updatedAt = new Date();
+
+      await movie.save();
+      res.json({ message: "Movie updated successfully", movie });
+    } catch (err) {
+      const error = new HttpError(
+        "Updating movie failed, please try again.",
+        500
+      );
+      return next(error);
+    }
   }
-});
+);
 
 // Delete a movie
 router.delete("/:id", auth, isProducer, async (req, res, next) => {

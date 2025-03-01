@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUser, FaSearch, FaSignOutAlt } from "react-icons/fa";
 import defaultAvatar from "../assests/s10.jpg";
+
 const Header = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem("user")) || {}
   );
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -38,7 +40,7 @@ const Header = () => {
   // 👇 Watch `user` state changes
   useEffect(() => {
     console.log("Updated User:", user);
-  }, [user]); // This will trigger re-render
+  }, [user]);
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
@@ -65,16 +67,27 @@ const Header = () => {
         </nav>
 
         {/* Search Bar */}
-        <div className="flex items-center">
-          
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search movies..."
+            className="bg-gray-700 text-white p-2 pl-8 rounded-md focus:outline-none"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <FaSearch className="absolute left-2 top-3 text-gray-400" />
+        </div>
 
+        {/* Profile & Logout Section */}
+        <div className="flex items-center">
           {/* Profile Picture */}
           <Link to="/profile" className="hover:opacity-80 mr-4">
-            <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+            <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
               <img
-                src={user.user.ProfileImage}
+                src={user?.user?.ProfileImage || defaultAvatar}
                 alt="Profile"
                 className="w-full h-full object-cover"
+                style={{ objectFit: "cover" }} // Ensures full picture visibility
               />
             </div>
           </Link>

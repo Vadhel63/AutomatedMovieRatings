@@ -11,7 +11,7 @@ import MovieService from "./MovieService";
 import Header from "../components/Header"; // Import Header component
 
 const MovieForm = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // Get the movie ID from the URL (if editing)
   const navigate = useNavigate();
   const [movie, setMovie] = useState({
     Name: "",
@@ -39,27 +39,34 @@ const MovieForm = () => {
           Producer: userData.userId, // Set the Producer to the logged-in user's ID
         }));
         if (id) {
-          fetchMovie(id);
+          fetchMovie(id); // Fetch movie details if editing
         }
       }
     }
   }, [navigate, id]);
 
+  // Fetch movie details for editing
   const fetchMovie = async (movieId) => {
     try {
       const response = await MovieService.getMovieById(movieId);
-      setMovie(response.data.movie);
+      const movieData = response.data.movie;
+      setMovie({
+        ...movieData,
+        RealesedDate: movieData.RealesedDate.split("T")[0], // Format date for input field
+      });
     } catch (error) {
       console.error("Failed to fetch movie:", error);
       setError("Failed to load movie details. Please try again.");
     }
   };
 
+  // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setMovie({ ...movie, [name]: value });
   };
 
+  // Handle file input changes
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -67,6 +74,7 @@ const MovieForm = () => {
     }
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -81,14 +89,18 @@ const MovieForm = () => {
       }
 
       if (id) {
+        // Update existing movie
         await MovieService.updateMovie(id, formData);
         setSuccess("Movie updated successfully!");
       } else {
+        // Add new movie
         await MovieService.addMovie(formData);
         setSuccess("Movie added successfully!");
       }
+
+      // Redirect to MovieHome after a short delay
       setTimeout(() => {
-        navigate("/MovieHome");
+        navigate("/home");
       }, 1500);
     } catch (error) {
       console.error("Failed to save movie:", error);

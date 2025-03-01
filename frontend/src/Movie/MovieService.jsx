@@ -45,6 +45,13 @@ const deleteMovie = (id) => {
     },
   });
 };
+const searchMovies = (term, token) => {
+  return axios.get(`${API_URL}/search?term=${term}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
 
 export default {
   getMovies,
@@ -52,4 +59,5 @@ export default {
   addMovie,
   updateMovie,
   deleteMovie,
+  searchMovies,
 };
