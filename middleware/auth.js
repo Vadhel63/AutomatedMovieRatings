@@ -19,11 +19,18 @@ module.exports = (req, res, next) => {
 // Middleware to check if the user is a Producer
 module.exports.isProducer = (req, res, next) => {
   if (req.userData.role !== "Producer") {
-    return res
-      .status(403)
-      .json({
-        message: "Access denied. Only Producers can perform this action.",
-      });
+    return res.status(403).json({
+      message: "Access denied. Only Producers can perform this action.",
+    });
+  }
+  next();
+};
+
+module.exports.isAdmin = (req, res, next) => {
+  if (req.userData.role !== "Admin") {
+    return res.status(403).json({
+      message: "Access denied. Only Admin can perform this action.",
+    });
   }
   next();
 };

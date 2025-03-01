@@ -9,6 +9,7 @@ import MovieService from "./Movie/MovieService";
 import MovieForm from "./Movie/MovieForm";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MovieDetails from "./Movie/MovieDetails";
+import AdminDashboard from "./components/AdminDashboard";
 const App = () => {
   return (
     <Router>
@@ -23,6 +24,7 @@ const App = () => {
           <Route path="/MovieForm" element={<MovieForm />} />
           <Route path="/MovieForm/:id" element={<MovieForm />} />
           <Route path="/MovieDetails/:id" element={<MovieDetails />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
         </Route>
       </Routes>
     </Router>

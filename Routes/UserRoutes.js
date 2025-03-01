@@ -7,6 +7,8 @@ const jwt = require("jsonwebtoken");
 const HttpError = require("../Models/http-errors");
 const mongoose = require("mongoose");
 const { upload } = require("../middleware/Cloudinary");
+
+const { isAdmin } = require("../middleware/auth");
 router.post("/signup", async (req, res, next) => {
   const { UserName, Email, Password, Role } = req.body;
   let existingUser;
@@ -77,7 +79,7 @@ router.post("/login", async (req, res, next) => {
   // You may want to send back user data or a token upon successful login
   res.json({ token: token, user: identifiedUser });
 });
-router.get("/", async (req, res, next) => {
+router.get("/", auth, isAdmin, async (req, res, next) => {
   try {
     const users = await User.find();
     res.json({ users });
@@ -189,6 +191,16 @@ router.delete("/:id", async (req, res, next) => {
   } catch (err) {
     console.error("Error deleting user:", err); // Log the error
     res.status(500).json({ message: "Internal server error", error: err });
+  }
+});
+
+router.post("/train-model", auth, isAdmin, async (req, res) => {
+  const { timeframe } = req.body;
+  try {
+    // Add your model training logic here based on the timeframe
+    res.json({ message: `Model trained for ${timeframe}.` });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to train model." });
   }
 });
 

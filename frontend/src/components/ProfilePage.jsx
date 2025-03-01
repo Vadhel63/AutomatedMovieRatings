@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // For redirection
 import API from "../api"; // Axios instance for API calls
 import { motion } from "framer-motion"; // For animations
-
+import Header from "./Header";
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(""); // For storing error messages
@@ -111,8 +111,9 @@ const ProfilePage = () => {
   }
 
   return (
+    
     <motion.div
-      className="min-h-screen bg-gradient-to-r from-blue-100 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
+      className="min-h-screen bg-gradient-to-r from-gray-900 to-indigo-900 text-white p-6 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}

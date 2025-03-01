@@ -58,8 +58,8 @@ const Header = () => {
 
         {/* Navigation Links */}
         <nav className="hidden md:flex space-x-6">
-          <Link to="/MovieHome" className="hover:text-gray-300">
-            Movie Home
+          <Link to="/home" className="hover:text-gray-300">
+            Home
           </Link>
           <Link to="/MovieForm" className="hover:text-gray-300">
             Add Movie

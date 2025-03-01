@@ -80,7 +80,7 @@ const MovieHome = () => {
   };
 
   const handleViewMovie = (movieId) => {
-    navigate(`/movie/${movieId}`); // Navigate to the movie details page
+    navigate(`/MovieDetails/${movieId}`); // Navigate to the movie details page
   };
 
   return (

@@ -126,7 +126,7 @@ const MovieForm = () => {
       <div className="max-w-3xl mx-auto pt-10 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           {/* Form Header */}
-          <div className="bg-gradient-to-r from-blue-500 to-purple-600 px-6 py-4">
+          <div className="bg-gradient-to-r from-gray-900 to-indigo-900 text-white p-6">
             <h1 className="text-2xl font-bold text-white flex items-center">
               <FaFilm className="mr-2" />
               {id ? "Edit Movie Details" : "Add New Movie"}
