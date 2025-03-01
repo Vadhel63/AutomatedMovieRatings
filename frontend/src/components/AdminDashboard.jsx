@@ -231,7 +231,7 @@ const AdminDashboard = () => {
               {showProfileDropdown && (
                 <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg py-1 z-10 text-gray-200">
                   <a
-                    href="/admin/profile"
+                    href="profile"
                     className="flex items-center px-4 py-2 hover:bg-gray-700"
                   >
                     <User size={16} className="mr-2" />

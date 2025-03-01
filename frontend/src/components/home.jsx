@@ -12,6 +12,8 @@ const Home = () => {
       const userData = JSON.parse(atob(token.split(".")[1])); // Decode the token
       if (userData.role === "Admin") {
         navigate("/admin-dashboard"); // Redirect admins to the Admin Dashboard
+      } else if (userData.role === "User") {
+        navigate("/user-dashboard");
       }
     }
   }, [navigate]);

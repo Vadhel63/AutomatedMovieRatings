@@ -37,7 +37,7 @@ const Register = () => {
       const token = response.data.token;
       localStorage.setItem("authToken", token); // Save the token for future requests
       setError("");
-      navigate("/home"); // Redirect to Home after registration
+      navigate("/"); // Redirect to Home after registration
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed!");
       setSuccess("");

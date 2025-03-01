@@ -56,6 +56,18 @@ router.get("/", auth, isProducer, async (req, res, next) => {
     return next(error);
   }
 });
+router.get("/all", async (req, res, next) => {
+  try {
+    const movies = await Movie.find().populate("Producer", "UserName Email");
+    res.json({ movies });
+  } catch (err) {
+    const error = new HttpError(
+      "Fetching movies failed, please try again later.",
+      500
+    );
+    return next(error);
+  }
+});
 
 router.get("/search", auth, async (req, res, next) => {
   const { term } = req.query;
@@ -94,7 +106,7 @@ router.get("/:id", auth, isProducer, async (req, res, next) => {
       "Producer",
       "UserName Email"
     );
-    console.log(movie.Producer[0]._id);//producer field is array list thats why write like this
+    console.log(movie.Producer[0]._id); //producer field is array list thats why write like this
     if (!movie || movie.Producer[0]._id.toString() !== req.userData.userId) {
       console.error("Movie not found or unauthorized access.");
       return res.status(404).json({ message: "Movie not found." });

@@ -111,7 +111,6 @@ const ProfilePage = () => {
   }
 
   return (
-    
     <motion.div
       className="min-h-screen bg-gradient-to-r from-gray-900 to-indigo-900 text-white p-6 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
       initial={{ opacity: 0 }}
@@ -171,7 +170,7 @@ const ProfilePage = () => {
                 onChange={(e) =>
                   setUpdatedUser({ ...updatedUser, UserName: e.target.value })
                 }
-                className="mt-1 block w-full border border-gray-300 rounded py-2 px-3 focus:ring focus:ring-blue-500"
+                className="mt-1 block w-full text-black border border-gray-300 rounded py-2 px-3 focus:ring focus:ring-blue-500"
               />
             </div>
             <div>
@@ -184,7 +183,7 @@ const ProfilePage = () => {
                 onChange={(e) =>
                   setUpdatedUser({ ...updatedUser, Email: e.target.value })
                 }
-                className="mt-1 block w-full border border-gray-300 rounded py-2 px-3 focus:ring focus:ring-blue-500"
+                className="mt-1 block w-full text-black border border-gray-300 rounded py-2 px-3 focus:ring focus:ring-blue-500"
               />
             </div>
             <div>
@@ -194,7 +193,7 @@ const ProfilePage = () => {
               <input
                 type="file"
                 onChange={handleFileChange}
-                className="mt-1 block w-full border border-gray-300 rounded py-2 px-3 focus:ring focus:ring-blue-500"
+                className="mt-1 block w-full border text-black border-gray-300 rounded py-2 px-3 focus:ring focus:ring-blue-500"
               />
             </div>
             <button

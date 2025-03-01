@@ -7,7 +7,8 @@ const HttpError = require("../Models/http-errors");
 // Create a new review
 router.post("/", async (req, res, next) => {
   const { Description, User, Movie } = req.body;
-
+  console.log(User);
+  console.log(Description);
   if (
     !mongoose.Types.ObjectId.isValid(User) ||
     !mongoose.Types.ObjectId.isValid(Movie)
