@@ -1,13 +1,11 @@
 import { Link } from "react-router-dom";
 import Header from "./Header"; // Import the Header component
 import SearchMovies from "./SearchMovie";
-
+import MovieHome from "../Movie/MovieHome";
 const Home = () => (
   <div>
     <Header /> {/* Add Header here */}
-    <h1>Welcome to Home</h1>
-    <Link to="/profile">Go to Profile</Link>
-    <SearchMovies />
+    <MovieHome />
   </div>
 );
 

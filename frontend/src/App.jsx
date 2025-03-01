@@ -8,7 +8,7 @@ import MovieHome from "./Movie/MovieHome";
 import MovieService from "./Movie/MovieService";
 import MovieForm from "./Movie/MovieForm";
 import ProtectedRoute from "./components/ProtectedRoute";
-
+import MovieDetails from "./Movie/MovieDetails";
 const App = () => {
   return (
     <Router>
@@ -21,6 +21,8 @@ const App = () => {
           <Route path="/MovieHome" element={<MovieHome />} />
           <Route path="/MovieService" element={<MovieService />} />
           <Route path="/MovieForm" element={<MovieForm />} />
+          <Route path="/MovieForm/:id" element={<MovieForm />} />
+          <Route path="/MovieDetails/:id" element={<MovieDetails />} />
         </Route>
       </Routes>
     </Router>
