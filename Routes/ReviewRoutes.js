@@ -3,12 +3,12 @@ const mongoose = require("mongoose");
 const router = express.Router();
 const Review = require("../Models/Review");
 const HttpError = require("../Models/http-errors");
+const auth = require("../middleware/auth");
 
 // Create a new review
 router.post("/", async (req, res, next) => {
   const { Description, User, Movie } = req.body;
-  console.log(User);
-  console.log(Description);
+
   if (
     !mongoose.Types.ObjectId.isValid(User) ||
     !mongoose.Types.ObjectId.isValid(Movie)
@@ -16,23 +16,23 @@ router.post("/", async (req, res, next) => {
     return next(new HttpError("Invalid User or Movie ID format.", 400));
   }
 
-  const newReview = new Review({
-    Description,
-    User,
-    Movie,
-  });
+  const newReview = new Review({ Description, User, Movie });
 
   try {
     await newReview.save();
-    res
+    return res
       .status(201)
       .json({ message: "Review created successfully", review: newReview });
   } catch (err) {
-    const error = new HttpError(
-      "Creating review failed, please try again.",
-      500
+    console.error("Error saving review:", err);
+
+    if (err.name === "ValidationError") {
+      return next(new HttpError(`Validation error: ${err.message}`, 400));
+    }
+
+    return next(
+      new HttpError("Creating review failed, please try again.", 500)
     );
-    return next(error);
   }
 });
 
@@ -51,6 +51,26 @@ router.get("/", async (req, res, next) => {
     return next(error);
   }
 });
+//Get review by MovieId
+router.get("/Movie/:id", async (req, res, next) => {
+  const MovieId = req.params.id;
+  console.log(MovieId);
+  if (!mongoose.Types.ObjectId.isValid(MovieId)) {
+    return next(new HttpError("Invalid Movie ID format.", 400));
+  }
+  try {
+    const reviews = await Review.find({ Movie: MovieId })
+      .populate("User", "UserName")
+      .populate("Movie", "Name");
+    if (!reviews) {
+      return next(new HttpError("No reviews found for this movie.", 404));
+    }
+    res.json({ reviews });
+  } catch (err) {
+    const error = new HttpError("Fetching Reviews Failed ,Please Try again");
+    return next(error);
+  }
+});
 
 // Get review by ID
 router.get("/:id", async (req, res, next) => {
@@ -63,7 +83,7 @@ router.get("/:id", async (req, res, next) => {
   try {
     const review = await Review.findById(reviewId)
       .populate("User", "UserName")
-      .populate("Movie", "Title");
+      .populate("Movie", "Name");
     if (!review) {
       return next(new HttpError("Review not found.", 404));
     }

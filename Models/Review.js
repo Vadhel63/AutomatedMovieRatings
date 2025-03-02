@@ -7,7 +7,6 @@ const ReviewSchema = new mongoose.Schema({
   },
   rating: {
     type: Number,
-    required: true,
     Default: 2,
   },
   LikeCount: {

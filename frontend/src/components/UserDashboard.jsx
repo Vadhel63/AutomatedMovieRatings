@@ -19,6 +19,8 @@ const UserDashboard = () => {
   const [showAllHistory, setShowAllHistory] = useState(false);
   const [showReviews, setShowReviews] = useState(false);
   const [movieReviews, setMovieReviews] = useState([]);
+  const [reviewLikes, setReviewLikes] = useState({});
+  const [reviewDislikes, setReviewDislikes] = useState({});
   const navigate = useNavigate();
 
   // Fetch user data and token from localStorage or context
@@ -70,7 +72,7 @@ const UserDashboard = () => {
   const handleMovieClick = (movie) => {
     const updatedRecentlyVisited = [
       movie,
-      ...recentlyVisited.filter((m) => m.id !== movie.id).slice(0, 4),
+      ...recentlyVisited.filter((m) => m._id !== movie._id).slice(0, 4),
     ];
     setRecentlyVisited(updatedRecentlyVisited);
   };
@@ -100,20 +102,18 @@ const UserDashboard = () => {
   // Fetch reviews for a specific movie
   const fetchMovieReviews = async (movieId) => {
     try {
+      console.log(movieId);
       const response = await fetch(
-        `http://localhost:5000/reviews?movieId=${movieId}`,
+        `http://localhost:5000/review/Movie/${movieId}`,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },
         }
       );
-      if (response.ok) {
-        const data = await response.json();
-        setMovieReviews(data.reviews);
-      } else {
-        console.error("Failed to fetch reviews");
-      }
+
+      const data = await response.json();
+      setMovieReviews(data.reviews);
     } catch (error) {
       console.error("Error fetching reviews:", error);
     }
@@ -135,14 +135,14 @@ const UserDashboard = () => {
         body: JSON.stringify({
           Description: reviewText,
           rating: reviewRating,
-          User: user.userId,
+          User: user.user._id,
           Movie: selectedMovie._id,
         }),
       });
-
+      console.log(user);
       if (response.ok) {
         console.log("Review submitted successfully");
-        fetchMovieReviews(selectedMovie.id); // Refresh reviews after submission
+        fetchMovieReviews(selectedMovie._id); // Refresh reviews after submission
       } else {
         console.error("Failed to submit review");
       }
@@ -154,6 +154,26 @@ const UserDashboard = () => {
     setReviewText("");
     setReviewRating(5);
     setSelectedMovie(null);
+  };
+
+  const handleLikeDislike = async (reviewId, action) => {
+    try {
+      // Here you would normally make an API call to update likes/dislikes
+      // For now, we'll just update the UI state
+      if (action === "like") {
+        setReviewLikes({
+          ...reviewLikes,
+          [reviewId]: (reviewLikes[reviewId] || 0) + 1,
+        });
+      } else if (action === "dislike") {
+        setReviewDislikes({
+          ...reviewDislikes,
+          [reviewId]: (reviewDislikes[reviewId] || 0) + 1,
+        });
+      }
+    } catch (error) {
+      console.error(`Error ${action}ing review:`, error);
+    }
   };
 
   // Define filteredMovies here
@@ -176,21 +196,23 @@ const UserDashboard = () => {
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search movies..."
-                className="px-4 py-2 rounded-lg text-gray-800 focus:outline-none"
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  handleSearch(e.target.value);
-                }}
-              />
-              <Search
-                className="absolute right-3 top-2.5 text-gray-500"
-                size={18}
-              />
+            <div className="relative flex-1 max-w-md">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search movies..."
+                  className="w-full px-4 py-2 pl-10 rounded-lg text-gray-800 bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    handleSearch(e.target.value);
+                  }}
+                />
+                <Search
+                  className="absolute left-3 top-2.5 text-gray-500"
+                  size={18}
+                />
+              </div>
             </div>
 
             <div
@@ -199,7 +221,11 @@ const UserDashboard = () => {
             >
               <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden">
                 <img
-                  src={user?.user?.ProfileImage || defaultAvatar}
+                  src={
+                    user?.user?.ProfileImage
+                      ? user.user.ProfileImage
+                      : defaultAvatar
+                  }
                   alt="User Profile"
                   className="w-full h-full object-cover"
                 />
@@ -263,7 +289,8 @@ const UserDashboard = () => {
                     <img
                       src={
                         movie.MovieImage ||
-                        "/placeholder.svg?height=40&width=40"
+                        "/placeholder.svg?height=40&width=40" ||
+                        "/placeholder.svg"
                       }
                       alt={movie.Name}
                       className="w-full h-full object-cover rounded"
@@ -296,7 +323,7 @@ const UserDashboard = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {movies.slice(0, 2).map((movie) => (
                 <div
-                  key={movie.id}
+                  key={movie._id}
                   className="bg-white rounded-lg shadow-md overflow-hidden flex"
                 >
                   <div className="w-24 h-36 flex-shrink-0">
@@ -333,7 +360,7 @@ const UserDashboard = () => {
                       onClick={() => {
                         setSelectedMovie(movie);
                         setShowReviews(true);
-                        fetchMovieReviews(movie.id);
+                        fetchMovieReviews(movie._id);
                       }}
                     >
                       View Reviews
@@ -350,7 +377,7 @@ const UserDashboard = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {filteredMovies.map((movie) => (
                 <div
-                  key={movie.id}
+                  key={movie._id}
                   className="bg-white rounded-lg shadow-md overflow-hidden"
                   onClick={() => handleMovieClick(movie)}
                 >
@@ -358,7 +385,8 @@ const UserDashboard = () => {
                     <img
                       src={
                         movie.MovieImage ||
-                        "/placeholder.svg?height=300&width=200"
+                        "/placeholder.svg?height=300&width=200" ||
+                        "/placeholder.svg"
                       }
                       alt={movie.Name}
                       className="w-full h-full object-cover"
@@ -425,7 +453,8 @@ const UserDashboard = () => {
                   <img
                     src={
                       selectedMovie.MovieImage ||
-                      "/placeholder.svg?height=300&width=200"
+                      "/placeholder.svg?height=300&width=200" ||
+                      "/placeholder.svg"
                     }
                     alt={selectedMovie.Name}
                     className="w-full h-full object-cover rounded"
@@ -493,43 +522,194 @@ const UserDashboard = () => {
       {/* Reviews Modal */}
       {showReviews && selectedMovie && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-md">
-            <div className="flex justify-between items-center p-4 border-b">
-              <h3 className="text-lg font-semibold">
+          <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl max-h-[80vh] flex flex-col">
+            <div className="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10">
+              <h3 className="text-lg font-semibold flex items-center">
+                <Film className="mr-2 text-blue-600" size={20} />
                 Reviews for {selectedMovie.Name}
               </h3>
               <button
                 onClick={() => setShowReviews(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 hover:text-gray-700 rounded-full p-1 hover:bg-gray-100"
               >
                 <X size={20} />
               </button>
             </div>
 
-            <div className="p-4">
+            <div className="p-4 overflow-y-auto flex-grow">
               {movieReviews.length > 0 ? (
                 movieReviews.map((review) => (
-                  <div key={review._id} className="mb-4">
-                    <p className="text-sm text-gray-700">
-                      {review.Description}
-                    </p>
-                    <div className="flex items-center mt-2">
-                      <Star
-                        size={16}
-                        className="text-yellow-500 mr-1"
-                        fill="currentColor"
-                      />
-                      <span className="text-sm">{review.rating}/5</span>
+                  <div
+                    key={review._id}
+                    className="mb-6 border-b pb-4 last:border-0"
+                  >
+                    <div className="flex items-start mb-3">
+                      <div className="w-10 h-10 rounded-full bg-gray-300 flex-shrink-0 overflow-hidden">
+                        <img
+                          src={review.User.ProfileImage || defaultAvatar}
+                          alt={review.User.UserName}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="ml-3 flex-1">
+                        <div className="flex justify-between items-start">
+                          <h4 className="font-medium text-gray-900">
+                            {review.User.UserName}
+                          </h4>
+                          <div className="flex items-center">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <Star
+                                key={star}
+                                size={16}
+                                className="text-yellow-500"
+                                fill={
+                                  star <= review.rating
+                                    ? "currentColor"
+                                    : "none"
+                                }
+                              />
+                            ))}
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-500">
+                          {new Date(
+                            review.createdAt || Date.now()
+                          ).toLocaleDateString()}
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-xs text-gray-500">
-                      By: {review.User?.UserName}
-                    </p>
+
+                    <div className="ml-13 pl-13">
+                      <p className="text-gray-800 mb-3">{review.Description}</p>
+
+                      <div className="flex items-center space-x-4 mt-2">
+                        <button
+                          className="flex items-center text-gray-600 hover:text-blue-600 text-sm"
+                          onClick={() => handleLikeDislike(review._id, "like")}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 mr-1"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
+                            />
+                          </svg>
+                          {reviewLikes[review._id] || review.likeCount || 0}{" "}
+                          Likes
+                        </button>
+                        <button
+                          className="flex items-center text-gray-600 hover:text-red-600 text-sm"
+                          onClick={() =>
+                            handleLikeDislike(review._id, "dislike")
+                          }
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 mr-1"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.905 0-.714.211-1.412.608-2.006L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5"
+                            />
+                          </svg>
+                          {reviewDislikes[review._id] ||
+                            review.dislikeCount ||
+                            0}{" "}
+                          Dislikes
+                        </button>
+                        <button className="flex items-center text-gray-600 hover:text-purple-600 text-sm">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 mr-1"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                            />
+                          </svg>
+                          Reply
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-gray-500">No reviews yet.</p>
+                <div className="text-center py-8">
+                  <div className="mx-auto w-16 h-16 mb-4 text-gray-300">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1}
+                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                      />
+                    </svg>
+                  </div>
+                  <p className="text-gray-500">
+                    No reviews yet. Be the first to share your thoughts!
+                  </p>
+                  <button
+                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                    onClick={() => {
+                      setShowReviews(false);
+                      handleWriteReview(selectedMovie);
+                    }}
+                  >
+                    Write a Review
+                  </button>
+                </div>
               )}
             </div>
+
+            {movieReviews.length > 0 && (
+              <div className="p-4 border-t sticky bottom-0 bg-white">
+                <button
+                  className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center justify-center"
+                  onClick={() => {
+                    setShowReviews(false);
+                    handleWriteReview(selectedMovie);
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                    />
+                  </svg>
+                  Write Your Review
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
